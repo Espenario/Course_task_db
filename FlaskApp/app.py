@@ -1,9 +1,10 @@
-from flask import Flask, render_template, json, request
+from flask import Flask, render_template, json, request, session, redirect
 import psycopg2
 import os
-from werkzeug.security import generate_password_hash, check_password_hash
+#from werkzeug.security import generate_password_hash, check_password
 
 app = Flask(__name__)
+app.secret_key = 'Everyone should enjoy TFL)'
 
 @app.route("/")
 def main():
@@ -20,44 +21,83 @@ def get_db_connection():
                             password=os.environ['DB_PASSWORD'])
     return conn
 
+@app.route('/signin')
+def display_signin():
+    return render_template('signin.html')
+
+@app.route('/api/validateLogin', methods=['POST'])
+def validateLogin():
+    _username = request.form['inputEmail']
+    _password = request.form['inputPassword']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    #_hashed_password = generate_password_hash(_password)
+    print(_username, '___________________')
+    cursor.callproc('sp_validateLogin', (_username,))
+    data = cursor.fetchall()
+    #return_message = str(data[0])
+    #print(str(data[0][3]), data[0][0], '__________________')
+    if len(data) > 0:
+        if (str(data[0][3]) == _password):
+            session['user'] = data[0][0]
+            return redirect('/userHome')
+        else:
+            return render_template('error.html',error = 'Wrong Email address or Password')
+    else:
+            return render_template('error.html',error = 'Wrong Email address or Password')
+    
+@app.route('/userHome')
+def userHome():
+    if session.get('user'):
+        return render_template('userhome.html')
+    else:
+        return render_template('error.html',error = 'Unauthorized Access')
+
+
 @app.route('/api/signup',methods=['POST'])
 def perform_signup():
     #try:
-        _name = request.form['inputName']
-        _email = request.form['inputEmail']
-        _password = request.form['inputPassword']
+    _name = request.form['inputName']
+    _email = request.form['inputEmail']
+    _password = request.form['inputPassword']
 
-        # validate the received values
-        if _name and _email and _password:
+    # validate the received values
+    if _name and _email and _password:
 
-            #print(os.environ['040403'], '+++++++++++++++++++++++++')
+        #print(os.environ['040403'], '+++++++++++++++++++++++++')
 
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            _hashed_password = generate_password_hash(_password)
-            cursor.callproc('sp_createUser', (_name, _email, _password))
-            data = cursor.fetchall()
-            return_message = str(data[0])
-            #print(return_message, "________")
-            #conn.commit()
-            if return_message.find('successfully'):
-                conn.commit()
-                cursor.close()
-                conn.close()
-                return json.dumps({'message': 'User created successfully !'})
-            else:
-                cursor.close()
-                conn.close()
-                return json.dumps({'error': str(data[0])})
-
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        #_hashed_password = generate_password_hash(_password)
+        cursor.callproc('sp_createUser', (_name, _email, _password))
+        data = cursor.fetchall()
+        return_message = str(data[0])      
+        #conn.commit()
+        if return_message.find('successfully') != -1:
+            conn.commit()
+            #cursor.close()
+            #conn.close()
+            return redirect('/')
         else:
-            return json.dumps({'html': '<span>Enter the required fields</span>'})
+            #cursor.close()
+            #conn.close()
+            #print(return_message, "+++++++++++++", return_message.find('successfully'))
+            return render_template('error.html',error = 'User with this username has already exist')
+
+    else:
+        return json.dumps({'html': '<span>Enter the required fields</span>'})
 
     #except Exception as e:
     #    return json.dumps({'error': str(e)})
     #finally:
     #    cursor.close()
     #    conn.close()
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect('/')
 
 
 if __name__ == "__main__":

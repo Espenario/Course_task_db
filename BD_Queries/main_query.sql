@@ -37,3 +37,9 @@ as $$
 		END IF;
 	END;
 $$ LANGUAGE plpgsql;
+
+Create or replace function sp_validateLogin(
+	p_username VARCHAR(20)
+as $$
+		select * from tbl_user where user_username = p_username;
+$$ LANGUAGE sql;
