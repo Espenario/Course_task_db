@@ -33,7 +33,7 @@ def validateLogin():
     conn = get_db_connection()
     cursor = conn.cursor()
     #_hashed_password = generate_password_hash(_password)
-    print(_username, '___________________')
+    #print(_username, '___________________')
     cursor.callproc('sp_validateLogin', (_username,))
     data = cursor.fetchall()
     #return_message = str(data[0])
@@ -53,7 +53,44 @@ def userHome():
         return render_template('userhome.html')
     else:
         return render_template('error.html',error = 'Unauthorized Access')
+    
+@app.route('/showSearch')
+def showSearch():
+    return render_template('search.html')
+    
+@app.route('/showAddItem')
+def showAddItemMenu():
+    return render_template('additemmenu.html')
 
+@app.route('/showAddComp')
+def showAddform():
+    return render_template('addcomp.html')
+
+@app.route('/addComp',methods=['POST'])
+def addWish():
+    try:
+        if session.get('user'):
+            _name = request.form['inputName']
+            _date = request.form['inputDate']
+            _country = request.form['inputCountry']
+            _revenue = request.form['inputRevenue']
+            _type = request.form['inputType']
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.callproc('sp_addCompany',(_name, _date, _country, _revenue, _type,))
+            data = cursor.fetchall()[0][0]
+            if len(data) is 0:
+                conn.commit()
+                return redirect('/userHome')
+            else:
+                return render_template('error.html',error = 'An error occurred!')
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
 
 @app.route('/api/signup',methods=['POST'])
 def perform_signup():
