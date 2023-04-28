@@ -63,11 +63,11 @@ def showAddItemMenu():
     return render_template('additemmenu.html')
 
 @app.route('/showAddComp')
-def showAddform():
+def showAddformComp():
     return render_template('addcomp.html')
 
 @app.route('/addComp',methods=['POST'])
-def addWish():
+def addComp():
     try:
         if session.get('user'):
             _name = request.form['inputName']
@@ -77,7 +77,79 @@ def addWish():
             _type = request.form['inputType']
             conn = get_db_connection()
             cursor = conn.cursor()
-            cursor.callproc('sp_addCompany',(_name, _date, _country, _revenue, _type,))
+            if len(_date) == 0:
+                cursor.callproc('sp_addCompany',(_name, _country, _revenue, _type,))
+            else:
+                cursor.callproc('sp_addCompany',(_name, _country, _revenue, _type, _date,))
+            data = cursor.fetchall()[0][0]
+            if len(data) is 0:
+                conn.commit()
+                return redirect('/userHome')
+            else:
+                return render_template('error.html',error = 'An error occurred!')
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/showAddLaunch')
+def showAddformLaunch():
+    return render_template('addlaunch.html')
+
+@app.route('/addLaunch',methods=['POST'])
+def addLaunch():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):   
+            _date = request.form['inputDate']
+            _rocket = request.form['inputRocket']
+            _payload = request.form['inputPayload']
+            _company = request.form['inputCompany']
+            # conn = get_db_connection()
+            # cursor = conn.cursor()
+            if len(_date) == 0:
+                cursor.callproc('sp_addLaunch',(_rocket, _payload, _company,))
+            else:
+                cursor.callproc('sp_addLaunch',(_rocket, _payload, _company, _date,))
+            data = cursor.fetchall()[0][0]
+            if len(data) is 0:
+                conn.commit()
+                return redirect('/userHome')
+            else:
+                return render_template('error.html',error = 'An error occurred!')
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/showAddSpacecraft')
+def showAddformSpacecraft():
+    return render_template('addspacecraft.html')
+
+@app.route('/addSpacecraft',methods=['POST'])
+def addSpacecraft():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _height = request.form['inputHeight']
+            _width = request.form['inputWidth'] 
+            _length = request.form['inputLength'] 
+            _con_cost = request.form['inputConstrcost']
+            _des_cost = request.form['inputDesigncost']
+            _company = request.form['inputCompany']
+            _site = request.form['inputSite']
+            _engine = request.form['inputEngine']
+            # conn = get_db_connection()
+            # cursor = conn.cursor()
+            cursor.callproc('sp_addSpacecraft',(_height, _width, _length, _con_cost, _des_cost, _company, _site, _engine,))
             data = cursor.fetchall()[0][0]
             if len(data) is 0:
                 conn.commit()

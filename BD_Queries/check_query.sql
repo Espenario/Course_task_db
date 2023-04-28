@@ -1,1 +1,2 @@
-select * from tbl_user
+CREATE EXTENSION fuzzystrmatch SCHEMA public;
+select sp_addLaunch('', '', '')
