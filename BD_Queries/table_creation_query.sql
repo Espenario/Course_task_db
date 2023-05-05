@@ -37,6 +37,7 @@ Create table tbl_spacecraft (
 	sc_width INT null constraint valid_width check (sc_width > 0),
 	sc_length INT null constraint valid_length check (sc_length > 0),
 	construction_cost MONEY null,
+	sc_name VARCHAR(50) null,
 	design_cost MONEY null,
 	manufacturer_company_id BIGINT,
 	Foreign key (manufacturer_company_id) references tbl_company (company_id),

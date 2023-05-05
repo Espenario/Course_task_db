@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json, request, session, redirect
+from flask import Flask, render_template, json, request, session, redirect, jsonify, flash
 import psycopg2
 import os
 #from werkzeug.security import generate_password_hash, check_password
@@ -41,6 +41,7 @@ def validateLogin():
     if len(data) > 0:
         if (str(data[0][3]) == _password):
             session['user'] = data[0][0]
+            flash('Login Successful') 
             return redirect('/userHome')
         else:
             return render_template('error.html',error = 'Wrong Email address or Password')
@@ -84,6 +85,7 @@ def addComp():
             data = cursor.fetchall()[0][0]
             if len(data) is 0:
                 conn.commit()
+                flash('Successful') 
                 return redirect('/userHome')
             else:
                 return render_template('error.html',error = 'An error occurred!')
@@ -118,6 +120,7 @@ def addLaunch():
             data = cursor.fetchall()[0][0]
             if len(data) is 0:
                 conn.commit()
+                flash('Successful') 
                 return redirect('/userHome')
             else:
                 return render_template('error.html',error = 'An error occurred!')
@@ -140,19 +143,68 @@ def addSpacecraft():
         cursor = conn.cursor()
         if session.get('user'):
             _height = request.form['inputHeight']
+            if not _height:
+                _height = '1'
             _width = request.form['inputWidth'] 
+            if not _width:
+                _width = '1'
             _length = request.form['inputLength'] 
+            if not _length:
+                _length = '1'
             _con_cost = request.form['inputConstrcost']
+            if not _con_cost:
+                _con_cost = '0'
+            _name = request.form['inputName']
             _des_cost = request.form['inputDesigncost']
+            if not _des_cost:
+                _des_cost = '0'
             _company = request.form['inputCompany']
             _site = request.form['inputSite']
             _engine = request.form['inputEngine']
             # conn = get_db_connection()
             # cursor = conn.cursor()
-            cursor.callproc('sp_addSpacecraft',(_height, _width, _length, _con_cost, _des_cost, _company, _site, _engine,))
+            cursor.callproc('sp_addSpacecraft',(_height, _width, _length, _con_cost, _name, _des_cost, _company, _site, _engine,))
             data = cursor.fetchall()[0][0]
             if len(data) is 0:
                 conn.commit()
+                flash('Successful') 
+                return redirect('/userHome')
+            else:
+                return render_template('error.html',error = 'An error occurred!')
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/showAddNeObject')
+def showAddformNeObject():
+    return render_template('addneobject.html')
+
+@app.route('/addNeObject',methods=['POST'])
+def addNeObject():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _spcr_id = request.form['inputID']
+            _mission = request.form['inputMission'] 
+            _orbit = request.form['inputOrbit'] 
+            _altitude = request.form['inputAltitude']
+            if not _altitude:
+                _altitude = '1000'
+            _speed = request.form['inputSpeed']
+            if not _speed:
+                _speed = '12.0'
+            # conn = get_db_connection()
+            # cursor = conn.cursor()
+            cursor.callproc('sp_addNeObject',(_spcr_id, _mission, _orbit, _altitude, _speed,))
+            data = cursor.fetchall()[0][0]
+            if len(data) is 0:
+                conn.commit()
+                flash('Successful') 
                 return redirect('/userHome')
             else:
                 return render_template('error.html',error = 'An error occurred!')

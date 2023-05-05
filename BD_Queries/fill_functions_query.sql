@@ -63,6 +63,7 @@ Create or replace Function sp_addSpacecraft(
 	p_sc_width INT default null,
 	p_sc_length INT default null,
 	p_construction_cost MONEY default null,
+	p_name VARCHAR(50) default 'PigCraft',
 	p_design_cost MONEY default null,
 	p_manufacturer_company_name VARCHAR(50) default 'PigConstruction',
 	p_produjction_site VARCHAR(50) default 'Moscow, Russia',
@@ -73,7 +74,7 @@ as $$
 	BEGIN
 		select c.company_id into comp_id from tbl_company as c where levenshtein(c.company_name, p_manufacturer_company_name) <= 3 order by 1 limit 1; 
 		if (comp_id is null) then 
-			select sp_addCompany(p_manufacturer_company_name);
+			perform sp_addCompany(p_manufacturer_company_name);
 		end if;
 		select c.company_id into comp_id from tbl_company as c where levenshtein(c.company_name, p_manufacturer_company_name) <= 3 order by 1 limit 1;
 		insert into tbl_spacecraft
@@ -82,6 +83,7 @@ as $$
 				sc_width,
 				sc_length,
 				construction_cost,
+				sc_name,
 				design_cost,
 				manufacturer_company_id,
 				produjction_site,
@@ -93,10 +95,45 @@ as $$
 				p_sc_width,
 				p_sc_length,
 				p_construction_cost,
+				p_name,
 				p_design_cost,
 				comp_id,
 				p_produjction_site,
 				p_engine_type 
+			);
+	END;
+$$ LANGUAGE plpgsql;
+
+Create or replace Function sp_addNeObject(
+	p_spacecraft_name VARCHAR(50) default 'PigCraft',
+	p_mission VARCHAR(50) default 'Reseach', 
+	p_orbit VARCHAR(50) default null,
+	p_altitude INT default 400,
+	p_speed REAL default 8.0
+) RETURNS void
+as $$ 
+	declare sc_id BIGINT;
+	BEGIN
+		select s.spacecraft_id into sc_id from tbl_spacecraft as s where levenshtein(s.sc_name, p_spacecraft_name) <= 3 order by 1 limit 1; 
+		if (sc_id is null) then 
+			select sp_addSpacecraft(sc_name = p_spacecraft_name);
+		end if;
+		select s.spacecraft_id into sc_id from tbl_spacecraft as s where levenshtein(s.sc_name, p_spacecraft_name) <= 3 order by 1 limit 1; 
+		insert into tbl_NEObject
+			(
+				spacecraft_id,
+				type_of_mission, 
+				orbit_type,
+				altitude,
+				speed
+			)
+			values 
+			(
+				sc_id,
+				p_mission, 
+				p_orbit,
+				p_altitude,
+				p_speed
 			);
 	END;
 $$ LANGUAGE plpgsql
