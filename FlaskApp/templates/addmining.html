@@ -34,33 +34,33 @@
 							<a href="/showAddItem" class="nav-link">Add Item</a>
 						</li>
                         <li class="nav_item" role="presentation">
-							<a href="/showAddNeObject" class="nav-link active">Add NeObject</a>
+							<a href="/showAddMining" class="nav-link active">Add Mining</a>
 						</li>
 					</ul>
 					                        
 				</nav>
 				        
 			</div>
-            <form method="post" action="/addNeObject">
+            <form method="post" action="/addMining">
                 <div class="mb-3">
                     <label for="InputName" class="form-label">Название аппарата</label>
                     <input type="text" name="inputName" class="form-control" id="InputName">
                 </div>
                 <div class="mb-3">
-                    <label for="InputMission" class="form-label">Тип миссии</label>
-                    <input type="text" name="inputMission" class="form-control" id="InputMission">
+                    <label for="InputPrRate" class="form-label">Скорость добычи</label>
+                    <input type="number" name="inputPrRate" class="form-control" id="InputPrRate" value="1">
                 </div>
                 <div class="mb-3">
-                    <label for="InputOrbit" class="form-label">Тип орбиты</label>
-                    <input type="text" name="inputOrbit" class="form-control" id="InputOrbit">
+                    <label for="InputMaterial" class="form-label">Тип добываемого сырья</label>
+                    <input type="text" name="inputMaterial" class="form-control" id="InputMaterial">
                 </div>
                 <div class="mb-3">
-                    <label for="InputAltitude" class="form-label">Высота</label>
-                    <input type="number" name="inputAltitude" class="form-control" id="InputAltitude">
+                    <label for="InputStartService" class="form-label">Начало деятельности</label>
+                    <input type="date" name="inputStartService" class="form-control" id="InputStartService" required>
                 </div>
                 <div class="mb-3">
-                    <label for="InputSpeed" class="form-label">Скорость</label>
-                    <input type="number" name="inputSpeed" class="form-control" id="InputSpeed">
+                    <label for="InputEndService" class="form-label">Предполагаемое окончание</label>
+                    <input type="date" name="inputEndService" class="form-control" id="InputEndService" required>
                 </div>        
                 <button type="submit" class="btn btn-primary">Отправить</button>
             </form>     

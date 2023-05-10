@@ -116,7 +116,7 @@ as $$
 	BEGIN
 		select s.spacecraft_id into sc_id from tbl_spacecraft as s where levenshtein(s.sc_name, p_spacecraft_name) <= 3 order by 1 limit 1; 
 		if (sc_id is null) then 
-			select sp_addSpacecraft(sc_name = p_spacecraft_name);
+			perform sp_addspacecraft(p_name := p_spacecraft_name);
 		end if;
 		select s.spacecraft_id into sc_id from tbl_spacecraft as s where levenshtein(s.sc_name, p_spacecraft_name) <= 3 order by 1 limit 1; 
 		insert into tbl_NEObject
@@ -134,6 +134,106 @@ as $$
 				p_orbit,
 				p_altitude,
 				p_speed
+			);
+	END;
+$$ LANGUAGE plpgsql;
+
+
+Create or replace Function sp_addTransport(
+	p_spacecraft_name VARCHAR(50) default 'PigCraft',
+	p_cargo_volume INT default 10, 
+	p_speed REAL default 10.0, 
+	p_cur_destination TEXT default 'Mars',
+	p_cargo_type TEXT default 'Pigs and Donats'
+) RETURNS void
+as $$ 
+	declare sc_id BIGINT;
+	BEGIN
+		select s.spacecraft_id into sc_id from tbl_spacecraft as s where levenshtein(s.sc_name, p_spacecraft_name) <= 3 order by 1 limit 1; 
+		if (sc_id is null) then 
+			perform sp_addSpacecraft(p_name := p_spacecraft_name);
+		end if;
+		select s.spacecraft_id into sc_id from tbl_spacecraft as s where levenshtein(s.sc_name, p_spacecraft_name) <= 3 order by 1 limit 1; 
+		insert into tbl_transport
+			(
+				spacecraft_id,
+				cargo_volume,
+				speed,
+				cur_destination, 
+				type_of_cargo
+			)
+			values 
+			(
+				sc_id,
+				p_cargo_volume, 
+				p_speed, 
+				p_cur_destination,
+				p_cargo_type
+			);
+	END;
+$$ LANGUAGE plpgsql;
+
+Create or replace Function sp_addMining(
+	p_spacecraft_name VARCHAR(50) default 'PigCraft',
+	p_production_rate INT default 1, 
+	p_material TEXT default 'Water', 
+	p_start_of_service DATE default CURRENT_DATE,
+	p_planned_end_of_service DATE default CURRENT_DATE + interval '10 years'
+) RETURNS void
+as $$ 
+	declare sc_id BIGINT;
+	BEGIN
+		select s.spacecraft_id into sc_id from tbl_spacecraft as s where levenshtein(s.sc_name, p_spacecraft_name) <= 3 order by 1 limit 1; 
+		if (sc_id is null) then 
+			perform sp_addSpacecraft(p_name := p_spacecraft_name);
+		end if;
+		select s.spacecraft_id into sc_id from tbl_spacecraft as s where levenshtein(s.sc_name, p_spacecraft_name) <= 3 order by 1 limit 1; 
+		insert into tbl_mining
+			(
+				spacecraft_id,
+				production_rate,
+				mining_material,
+				start_of_service, 
+				planned_end_of_service
+			)
+			values 
+			(
+				sc_id,
+				p_production_rate,
+				p_material,
+				p_start_of_service, 
+				p_planned_end_of_service
+			);
+	END;
+$$ LANGUAGE plpgsql;
+
+Create or replace Function sp_addResearch(
+	p_spacecraft_name VARCHAR(50) default 'PigCraft',
+	p_object_of_study VARCHAR(50) default 'Space Pigs', 
+	p_instruments_onboard TEXT default 'Camera', 
+	p_start_of_service DATE default CURRENT_DATE
+) RETURNS void
+as $$ 
+	declare sc_id BIGINT;
+	BEGIN
+		select s.spacecraft_id into sc_id from tbl_spacecraft as s where levenshtein(s.sc_name, p_spacecraft_name) <= 3 order by 1 limit 1; 
+		if (sc_id is null) then 
+			perform sp_addSpacecraft(p_name := p_spacecraft_name);
+		end if;
+		select s.spacecraft_id into sc_id from tbl_spacecraft as s where levenshtein(s.sc_name, p_spacecraft_name) <= 3 order by 1 limit 1; 
+		insert into tbl_research
+			(
+				spacecraft_id,
+				object_of_study,
+				instruments_onboard,
+				start_of_service
+			)
+			values 
+			(
+				sc_id,
+				p_object_of_study,
+				p_instruments_onboard,
+				p_start_of_service
 			);
 	END;
 $$ LANGUAGE plpgsql

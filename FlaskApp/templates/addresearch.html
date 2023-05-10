@@ -34,34 +34,30 @@
 							<a href="/showAddItem" class="nav-link">Add Item</a>
 						</li>
                         <li class="nav_item" role="presentation">
-							<a href="/showAddNeObject" class="nav-link active">Add NeObject</a>
+							<a href="/showAddResearch" class="nav-link active">Add Research</a>
 						</li>
 					</ul>
 					                        
 				</nav>
 				        
 			</div>
-            <form method="post" action="/addNeObject">
+            <form method="post" action="/addResearch">
                 <div class="mb-3">
                     <label for="InputName" class="form-label">Название аппарата</label>
                     <input type="text" name="inputName" class="form-control" id="InputName">
                 </div>
                 <div class="mb-3">
-                    <label for="InputMission" class="form-label">Тип миссии</label>
-                    <input type="text" name="inputMission" class="form-control" id="InputMission">
+                    <label for="InputObjStudy" class="form-label">Объекты для изучения</label>
+                    <input type="text" name="InputObjStudy" class="form-control" id="InputObjStudy">
                 </div>
                 <div class="mb-3">
-                    <label for="InputOrbit" class="form-label">Тип орбиты</label>
-                    <input type="text" name="inputOrbit" class="form-control" id="InputOrbit">
+                    <label for="InputInstruments" class="form-label">Научные приборы на борту</label>
+                    <input type="text" name="inputInstruments" class="form-control" id="InputInstruments">
                 </div>
                 <div class="mb-3">
-                    <label for="InputAltitude" class="form-label">Высота</label>
-                    <input type="number" name="inputAltitude" class="form-control" id="InputAltitude">
-                </div>
-                <div class="mb-3">
-                    <label for="InputSpeed" class="form-label">Скорость</label>
-                    <input type="number" name="inputSpeed" class="form-control" id="InputSpeed">
-                </div>        
+                    <label for="InputStartService" class="form-label">Начало деятельности</label>
+                    <input type="date" name="inputStartService" class="form-control" id="InputStartService" required>
+                </div>    
                 <button type="submit" class="btn btn-primary">Отправить</button>
             </form>     
 			<footer class="footer">

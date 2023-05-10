@@ -66,6 +66,7 @@ Create table tbl_transport (
 	Foreign key (spacecraft_id) references tbl_spacecraft (spacecraft_id),
 	cargo_volume INT null constraint valid_cargo_volume check(cargo_volume > 0),
 	speed REAL null,
+	cur_destination TEXT null, 
 	type_of_cargo TEXT null,
 	Primary key (transport_vehicle_id, spacecraft_id)
 	);

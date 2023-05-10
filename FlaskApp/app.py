@@ -189,7 +189,7 @@ def addNeObject():
         conn = get_db_connection()
         cursor = conn.cursor()
         if session.get('user'):
-            _spcr_id = request.form['inputID']
+            _spcr_name = request.form['inputName']
             _mission = request.form['inputMission'] 
             _orbit = request.form['inputOrbit'] 
             _altitude = request.form['inputAltitude']
@@ -200,7 +200,110 @@ def addNeObject():
                 _speed = '12.0'
             # conn = get_db_connection()
             # cursor = conn.cursor()
-            cursor.callproc('sp_addNeObject',(_spcr_id, _mission, _orbit, _altitude, _speed,))
+            cursor.callproc('sp_addNeObject',(_spcr_name, _mission, _orbit, _altitude, _speed,))
+            data = cursor.fetchall()[0][0]
+            if len(data) is 0:
+                conn.commit()
+                flash('Successful') 
+                return redirect('/userHome')
+            else:
+                return render_template('error.html',error = 'An error occurred!')
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/showAddTransport')
+def showAddformTransport():
+    return render_template('addtransport.html')
+
+@app.route('/addTransport',methods=['POST'])
+def addTransport():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _spcr_name = request.form['inputName']
+            _cargo_volume = request.form['inputCargoVolume'] 
+            if not _cargo_volume:
+                _cargo_volume = '1'
+            _cur_dest = request.form['inputDestination'] 
+            _cargo_type = request.form['inputCargoType']
+            _speed = request.form['inputSpeed']
+            if not _speed:
+                _speed = '0.0'
+            # if not _altitude:
+            #     _altitude = '1000'
+            # _speed = request.form['inputSpeed']
+            # if not _speed:
+            #     _speed = '12.0'
+            # conn = get_db_connection()
+            # cursor = conn.cursor()
+            cursor.callproc('sp_addTransport',(_spcr_name, _cargo_volume, _speed,  _cur_dest, _cargo_type,))
+            data = cursor.fetchall()[0][0]
+            if len(data) is 0:
+                conn.commit()
+                flash('Successful') 
+                return redirect('/userHome')
+            else:
+                return render_template('error.html',error = 'An error occurred!')
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/showAddMining')
+def showAddformMining():
+    return render_template('addmining.html')
+
+@app.route('/addMining',methods=['POST'])
+def addMining():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _spcr_name = request.form['inputName']
+            _pr_rate = request.form['inputPrRate'] 
+            _material = request.form['inputMaterial'] 
+            _start_service = request.form['inputStartService']
+            _end_service = request.form['inputEndService']
+            cursor.callproc('sp_addMining',(_spcr_name, _pr_rate, _material,  _start_service, _end_service,))
+            data = cursor.fetchall()[0][0]
+            if len(data) is 0:
+                conn.commit()
+                flash('Successful') 
+                return redirect('/userHome')
+            else:
+                return render_template('error.html',error = 'An error occurred!')
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/showAddResearch')
+def showAddformResearch():
+    return render_template('addresearch.html')
+
+@app.route('/addResearch',methods=['POST'])
+def addResearch():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _spcr_name = request.form['inputName']
+            _obj_study = request.form['InputObjStudy'] 
+            _instruments = request.form['inputInstruments'] 
+            _start_service = request.form['inputStartService']
+            cursor.callproc('sp_addResearch',(_spcr_name, _obj_study, _instruments,  _start_service,))
             data = cursor.fetchall()[0][0]
             if len(data) is 0:
                 conn.commit()
