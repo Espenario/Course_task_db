@@ -35,7 +35,7 @@
 					</a>
 					<ul class="nav nav-pills">
 						<li class="nav-item">
-							<a href="/userHome" class="nav-link active">Home</a>
+							<a href="/userHome" class="nav-link">Home</a>
 						</li>
 						<li class="nav-item">
 							<a href="/logout" class="nav-link">Logout</a>
@@ -43,41 +43,23 @@
 						<li class="nav_item" role="presentation">
 							<a href="/showAddItem" class="nav-link" >Items</a>
 						</li>
+                        <li class="nav_item" role="presentation">
+							<a href="/results" class="nav-link active" >Результаты запросов</a>
+						</li>
 					</ul>
 					                        
 				</nav>
 				        
 			</div>
-			{% with messages = get_flashed_messages() %}
-				{% if messages %}
-					{% for message in messages %}
-						<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
-							<div class="toast-header">
-								<img src="static/images/rocket-takeoff.svg" class="rounded me-2">
-								<strong class="me-auto">Status</strong>
-								<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Закрыть"></button>
-							</div>
-							<div class="toast-body">
-								{{ message }}
-							</div>
-						</div>
-					{% endfor %}
-				{% endif %}
-			{% endwith %}
-			<div class="bg-light rounded-3 mb-4 p-5">
-				<div class="container-fluid py-5">
-					<h1 class="text-center fw-bold display-5">
-						Welcome Home
-					</h1>
-				</div>
+			<div class="d-grid gap-2">
+                <a href="/results_allcomp" class="btn btn-outline-info">Запросы по компаниям</a>
+                <a href="/results_alllaunch" class="btn btn-outline-info">Запросы по запускам</a>
+                <a href="/results_allspacecraft" class="btn btn-outline-info">Запросы по кораблям</a>
+                <a href="/results_allneobject" class="btn btn-outline-info">Запросы по околоземным спутникам</a>
+                <a href="/results_alltransport" class="btn btn-outline-info">Запросы по транспортным кораблям</a>
+                <a href="/results_allmining" class="btn btn-outline-info">Запросы по добывающим кораблям</a>
+                <a href="/results_allresearch" class="btn btn-outline-info">Запросы по исследовательским аппаратам</a>
 			</div>
-			<script>
-				window.onload = (event) => {
-					let toastAlert = document.querySelector('.toast');
-					let toast = new bootstrap.Toast(toastAlert);
-					toast.show();
-				}	
-			</script>
 			        
 			<footer class="footer">
 				            

@@ -35,7 +35,7 @@
 					</a>
 					<ul class="nav nav-pills">
 						<li class="nav-item">
-							<a href="/userHome" class="nav-link active">Home</a>
+							<a href="/userHome" class="nav-link">Home</a>
 						</li>
 						<li class="nav-item">
 							<a href="/logout" class="nav-link">Logout</a>
@@ -43,41 +43,32 @@
 						<li class="nav_item" role="presentation">
 							<a href="/showAddItem" class="nav-link" >Items</a>
 						</li>
+                        <li class="nav_item" role="presentation">
+							<a href="/results" class="nav-link" >Результаты запросов</a>
+						</li>
 					</ul>
 					                        
 				</nav>
 				        
 			</div>
-			{% with messages = get_flashed_messages() %}
-				{% if messages %}
-					{% for message in messages %}
-						<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" >
-							<div class="toast-header">
-								<img src="static/images/rocket-takeoff.svg" class="rounded me-2">
-								<strong class="me-auto">Status</strong>
-								<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Закрыть"></button>
-							</div>
-							<div class="toast-body">
-								{{ message }}
-							</div>
-						</div>
-					{% endfor %}
-				{% endif %}
-			{% endwith %}
+			
 			<div class="bg-light rounded-3 mb-4 p-5">
 				<div class="container-fluid py-5">
 					<h1 class="text-center fw-bold display-5">
-						Welcome Home
-					</h1>
+                        {% for data in data_list %}
+                            {% for elem in data%}
+                            <div class="alert alert-info">
+                                <h2>ID: {{ elem[0] }}</h2>
+                                <p>Название: {{ elem[1] }}</p>
+                                <p><b>Дата основания: {{ elem[2] }}</b></p>
+                                <a href="/results_detailcomp/{{ elem[0] }}" class="btn btn-primary">Подробная информация</a>
+                            </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </h1>
 				</div>
 			</div>
-			<script>
-				window.onload = (event) => {
-					let toastAlert = document.querySelector('.toast');
-					let toast = new bootstrap.Toast(toastAlert);
-					toast.show();
-				}	
-			</script>
+			
 			        
 			<footer class="footer">
 				            

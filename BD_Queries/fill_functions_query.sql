@@ -38,7 +38,7 @@ as $$
 	BEGIN
 		select c.company_id into comp_id from tbl_company as c where levenshtein(c.company_name, p_launch_company) <= 3 order by 1 limit 1; 
 		if (comp_id is null) then 
-			select sp_addCompany(p_launch_company);
+			perform sp_addCompany(p_launch_company);
 		end if;
 		select c.company_id into comp_id from tbl_company as c where levenshtein(c.company_name, p_launch_company) <= 3 order by 1 limit 1;
 		insert into tbl_launch

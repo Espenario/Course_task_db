@@ -5,6 +5,13 @@ import os
 
 app = Flask(__name__)
 app.secret_key = 'Everyone should enjoy TFL)'
+data_comp = []
+data_launch = []
+data_spacecraft = []
+data_neobject = []
+data_transport = []
+data_mining = []
+data_research = []
 
 @app.route("/")
 def main():
@@ -318,6 +325,100 @@ def addResearch():
     finally:
         cursor.close()
         conn.close()
+
+@app.route('/showSearchComp')
+def showformSearchComp():
+    return render_template('searchcomp.html')
+
+@app.route('/SearchComp', methods=['POST', 'GET'])
+def SearchComp():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _comp_id = request.form['inputID']
+            _comp_name = request.form['inputName']
+            cursor.callproc('sp_ShowCompany',(_comp_id, _comp_name))
+            data = cursor.fetchall()
+            data_comp.append(data)
+            return render_template('results_comp.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results')
+def show_res():
+    return render_template('results.html')
+
+@app.route('/results_detailcomp/<int:id>')
+def show_details_comp(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            cursor.callproc('sp_ShowCompany_detail',(id,))
+            data = cursor.fetchall()
+            return render_template('results_compdetail.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_allcomp')
+def show_res_comp():
+    return render_template('results_allcomp.html', data_list = data_comp)
+
+@app.route('/showSearchLaunch')
+def showformSearchLaunch():
+    return render_template('searchLaunch.html')
+
+@app.route('/SearchLaunch', methods=['POST', 'GET'])
+def SearchLaunch():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _launch_id = request.form['inputID']
+            _date = request.form['inputDate']
+            cursor.callproc('sp_ShowLaunch',(_launch_id, _date))
+            data = cursor.fetchall()
+            data_launch.append(data)
+            return render_template('results_launch.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_detaillaunch/<int:id>')
+def show_details_launch(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            cursor.callproc('sp_ShowLaunch_detail',(id,))
+            data = cursor.fetchall()
+            return render_template('results_launchdetail.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_alllaunch')
+def show_res_launch():
+    return render_template('results_alllaunch.html', data_list = data_launch)
 
 @app.route('/api/signup',methods=['POST'])
 def perform_signup():
