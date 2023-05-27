@@ -420,6 +420,232 @@ def show_details_launch(id):
 def show_res_launch():
     return render_template('results_alllaunch.html', data_list = data_launch)
 
+
+@app.route('/showSearchSpacecraft')
+def showformSearchSpacecraft():
+    return render_template('searchSpacecraft.html')
+
+@app.route('/SearchSpacecraft', methods=['POST', 'GET'])
+def SearchSpacecraft():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _sc_id = request.form['inputID']
+            _sc_name = request.form['inputName']
+            cursor.callproc('sp_ShowSpacecraft',(_sc_id, _sc_name))
+            data = cursor.fetchall()
+            data_spacecraft.append(data)
+            return render_template('results_spacecraft.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_detailspacecraft/<int:id>')
+def show_details_spacecraft(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            cursor.callproc('sp_ShowSpacecraft_detail',(id,))
+            data = cursor.fetchall()
+            return render_template('results_spacecraftdetail.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_allspacecraft')
+def show_res_spacecraft():
+    return render_template('results_allspacecraft.html', data_list = data_spacecraft)
+
+@app.route('/showSearchNEobject')
+def showformSearchNEobject():
+    return render_template('searchNEobject.html')
+
+@app.route('/SearchNEobject', methods=['POST', 'GET'])
+def SearchNEobject():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _sc_id = request.form['inputID']
+            _neo_id = request.form['inputID1']
+            cursor.callproc('sp_showneobject',(_sc_id, _neo_id,))
+            data = cursor.fetchall()
+            data_neobject.append(data)
+            return render_template('results_neobject.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_detailneobject/<int:id>')
+def show_details_neobject(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            cursor.callproc('sp_ShowNEobject_detail',(id,))
+            data = cursor.fetchall()
+            return render_template('results_neobjectdetail.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_allneobject')
+def show_res_neobject():
+    return render_template('results_allneobject.html', data_list = data_neobject)
+
+@app.route('/showSearchTransport')
+def showformSearchTransport():
+    return render_template('searchTransport.html')
+
+@app.route('/SearchTransport', methods=['POST', 'GET'])
+def SearchTransport():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _sc_id = request.form['inputID']
+            _tr_id = request.form['inputID1']
+            cursor.callproc('sp_showtransport',(_sc_id, _tr_id,))
+            data = cursor.fetchall()
+            data_transport.append(data)
+            return render_template('results_transport.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_detailtransport/<int:id>')
+def show_details_transport(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            cursor.callproc('sp_ShowTransport_detail',(id,))
+            data = cursor.fetchall()
+            return render_template('results_transportdetail.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_alltransport')
+def show_res_transport():
+    return render_template('results_alltransport.html', data_list = data_transport)
+
+@app.route('/showSearchMining')
+def showformSearchMining():
+    return render_template('searchMining.html')
+
+@app.route('/SearchMining', methods=['POST', 'GET'])
+def SearchMining():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _sc_id = request.form['inputID']
+            _mn_id = request.form['inputID1']
+            cursor.callproc('sp_showmining',(_sc_id, _mn_id,))
+            data = cursor.fetchall()
+            data_mining.append(data)
+            return render_template('results_mining.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_detailmining/<int:id>')
+def show_details_mining(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            cursor.callproc('sp_ShowMining_detail',(id,))
+            data = cursor.fetchall()
+            return render_template('results_miningdetail.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_allmining')
+def show_res_mining():
+    return render_template('results_allmining.html', data_list = data_mining)
+
+@app.route('/showSearchResearch')
+def showformSearchResearch():
+    return render_template('searchResearch.html')
+
+@app.route('/SearchResearch', methods=['POST', 'GET'])
+def SearchResearch():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            _sc_id = request.form['inputID']
+            _rs_id = request.form['inputID1']
+            cursor.callproc('sp_showmining',(_sc_id, _rs_id,))
+            data = cursor.fetchall()
+            data_research.append(data)
+            return render_template('results_research.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_detailresearch/<int:id>')
+def show_details_research(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        if session.get('user'):
+            cursor.callproc('sp_ShowResearch_detail',(id,))
+            data = cursor.fetchall()
+            return render_template('results_researchdetail.html', data=data)
+        else:
+            return render_template('error.html',error = 'Unauthorized Access')
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/results_allresearch')
+def show_res_research():
+    return render_template('results_allresearch.html', data_list = data_research)
+
 @app.route('/api/signup',methods=['POST'])
 def perform_signup():
     #try:
@@ -430,8 +656,6 @@ def perform_signup():
     # validate the received values
     if _name and _email and _password:
 
-        #print(os.environ['040403'], '+++++++++++++++++++++++++')
-
         conn = get_db_connection()
         cursor = conn.cursor()
         #_hashed_password = generate_password_hash(_password)
@@ -441,27 +665,25 @@ def perform_signup():
         #conn.commit()
         if return_message.find('successfully') != -1:
             conn.commit()
-            #cursor.close()
-            #conn.close()
             return redirect('/')
         else:
-            #cursor.close()
-            #conn.close()
-            #print(return_message, "+++++++++++++", return_message.find('successfully'))
             return render_template('error.html',error = 'User with this username has already exist')
 
     else:
         return json.dumps({'html': '<span>Enter the required fields</span>'})
 
-    #except Exception as e:
-    #    return json.dumps({'error': str(e)})
-    #finally:
-    #    cursor.close()
-    #    conn.close()
 
 @app.route('/logout')
 def logout():
+    global data_comp,data_launch,data_spacecraft,data_neobject,data_transport,data_mining ,data_research
     session.pop('user', None)
+    data_comp = []
+    data_launch = []
+    data_spacecraft = []
+    data_neobject = []
+    data_transport = []
+    data_mining = []
+    data_research = []
     return redirect('/')
 
 

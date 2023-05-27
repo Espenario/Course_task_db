@@ -108,6 +108,209 @@ as $$
 $$ LANGUAGE sql;
 
 
+Create or replace FUNCTION sp_ShowSpacecraft(
+	p_id BIGINT default -1,
+	p_name VARCHAR(50) default 'Pig'
+) RETURNS setof tbl_spacecraft
+as $$
+	begin
+		if (p_id != -1) then
+			return query select * from tbl_spacecraft as s where s.spacecraft_id = p_id;
+		else
+			return query select * from tbl_spacecraft as s where s.sc_name = p_name;
+		end if;
+	end;
+$$ LANGUAGE plpgsql;
+
+Create or replace FUNCTION sp_ShowSpacecraft_detail(
+	p_id BIGINT default -1,
+	p_name VARCHAR(50) default 'Pig'
+) RETURNS setof tbl_spacecraft
+as $$
+	begin
+		if (p_id != -1) then
+			return query select * from tbl_spacecraft as s where s.spacecraft_id = p_id;
+		else
+			return query select * from tbl_spacecraft as s where s.sc_name = p_name;
+		end if;
+	end;
+$$ LANGUAGE plpgsql;
+
+Create or replace FUNCTION sp_showneobject(
+	sc_id BIGINT default -1,
+	neo_id BIGINT default 0
+) RETURNS setof tbl_NEObject
+as $$
+	begin
+		if (sc_id != -1) then
+			return query select * from tbl_NEObject as n where n.neo_vehicle_id = neo_id and n.spacecraft_id = sc_id;
+		else
+			return query select * from tbl_NEObject as n where n.neo_vehicle_id = neo_id;
+		end if;
+	end;
+$$ LANGUAGE plpgsql;
+
+Create or replace FUNCTION sp_ShowNEobject_detail(
+	neo_id BIGINT default 0
+) RETURNS table (
+				neo_vehicle_id BIGINT,
+				spacecraft_id BIGINT,
+				type_of_mission VARCHAR(50), 
+				orbit_type VARCHAR(50),
+				altitude INT,
+				speed REAL,
+				sc_height INT,
+				sc_width INT,
+				sc_length INT,
+				construction_cost MONEY
+				)
+as $$
+	SELECT
+		n.neo_vehicle_id, 
+		n.spacecraft_id,
+		n.type_of_mission, 
+		n.orbit_type,
+		n.altitude,
+		n.speed,
+		s.sc_height,
+		s.sc_width,
+		s.sc_length,
+		s.construction_cost
+	from tbl_NEObject as n left join tbl_spacecraft as s on n.spacecraft_id = s.spacecraft_id
+	where n.neo_vehicle_id = neo_id
+$$ LANGUAGE sql;
+
+
+Create or replace FUNCTION sp_showtransport(
+	sc_id BIGINT default -1,
+	tr_id BIGINT default 0
+) RETURNS setof tbl_transport
+as $$
+	begin
+		if (sc_id != -1) then
+			return query select * from tbl_transport as t where t.transport_vehicle_id = tr_id and t.spacecraft_id = sc_id;
+		else
+			return query select * from tbl_transport as t where t.transport_vehicle_id = tr_id;
+		end if;
+	end;
+$$ LANGUAGE plpgsql;
+
+Create or replace FUNCTION sp_ShowTransport_detail(
+	tr_id BIGINT default 0
+) RETURNS table (
+				transport_vehicle_id BIGINT,
+				spacecraft_id BIGINT,
+				cargo_volume INT,
+				speed REAL,
+				cur_destination TEXT, 
+				type_of_cargo TEXT,
+				sc_height INT,
+				sc_width INT,
+				sc_length INT,
+				construction_cost MONEY
+				)
+as $$
+	SELECT
+		t.transport_vehicle_id,
+		t.spacecraft_id,
+		t.cargo_volume,
+		t.speed,
+		t.cur_destination, 
+		t.type_of_cargo,
+		s.sc_height,
+		s.sc_width,
+		s.sc_length,
+		s.construction_cost
+	from tbl_transport as t left join tbl_spacecraft as s on t.spacecraft_id = s.spacecraft_id
+	where t.transport_vehicle_id = tr_id
+$$ LANGUAGE sql;
+
+Create or replace FUNCTION sp_showmining(
+	sc_id BIGINT default -1,
+	mn_id BIGINT default 0
+) RETURNS setof tbl_mining
+as $$
+	begin
+		if (sc_id != -1) then
+			return query select * from tbl_mining as m where m.mining_vehicle_id = mn_id and m.spacecraft_id = sc_id;
+		else
+			return query select * from tbl_mining as m where m.mining_vehicle_id = mn_id;
+		end if;
+	end;
+$$ LANGUAGE plpgsql;
+
+Create or replace FUNCTION sp_ShowMining_detail(
+	mn_id BIGINT default 0
+) RETURNS table (
+				mining_vehicle_id BIGINT,
+				spacecraft_id BIGINT,
+				production_rate INT,
+				mining_material VARCHAR(50),
+				start_of_service DATE,
+				planned_end_of_service DATE,
+				sc_height INT,
+				sc_width INT,
+				sc_length INT,
+				construction_cost MONEY
+				)
+as $$
+	SELECT
+		m.mining_vehicle_id,
+		m.spacecraft_id,
+		m.production_rate,
+		m.mining_material,
+		m.start_of_service,
+		m.planned_end_of_service,
+		s.sc_height,
+		s.sc_width,
+		s.sc_length,
+		s.construction_cost
+	from tbl_mining as m left join tbl_spacecraft as s on m.spacecraft_id = s.spacecraft_id
+	where m.mining_vehicle_id = mn_id
+$$ LANGUAGE sql;
+
+
+Create or replace FUNCTION sp_showresearch(
+	sc_id BIGINT default -1,
+	rs_id BIGINT default 0
+) RETURNS setof tbl_research
+as $$
+	begin
+		if (sc_id != -1) then
+			return query select * from tbl_research as r where r.research_vehicle_id = rs_id and r.spacecraft_id = sc_id;
+		else
+			return query select * from tbl_research as r where r.research_vehicle_id = rs_id;
+		end if;
+	end;
+$$ LANGUAGE plpgsql;
+
+Create or replace FUNCTION sp_ShowResearch_detail(
+	rs_id BIGINT default 0
+) RETURNS table (
+				research_vehicle_id BIGINT,
+				spacecraft_id BIGINT,
+				object_of_study VARCHAR(50),
+				instruments_onboard TEXT,
+				start_of_service DATE,
+				sc_height INT,
+				sc_width INT,
+				sc_length INT,
+				construction_cost MONEY
+				)
+as $$
+	SELECT
+		r.research_vehicle_id,
+		r.spacecraft_id,
+		r.object_of_study,
+		r.instruments_onboard,
+		r.start_of_service,
+		s.sc_height,
+		s.sc_width,
+		s.sc_length,
+		s.construction_cost
+	from tbl_research as r left join tbl_spacecraft as s on r.spacecraft_id = s.spacecraft_id
+	where r.research_vehicle_id = rs_id
+$$ LANGUAGE sql;
 
 
 
